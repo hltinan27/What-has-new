@@ -12,7 +12,7 @@ var cacheImages = NSCache<AnyObject, AnyObject>()
 
  class BlogViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
   @IBOutlet weak var tableView: UITableView!
- 
+  //Blog API = "https://newsapi.org"
   var activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
   var newsArray = [NewsArticleArray]()
   var showNews = [NewsArticleArray]()

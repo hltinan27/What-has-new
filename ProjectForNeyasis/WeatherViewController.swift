@@ -175,6 +175,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UITabl
   }
 }
 
+// MARK: F to C
 extension Double {
   
   var doubleToStringC: String {
