@@ -13,12 +13,11 @@ let api: String = "4fca2485d59a4602ab4ac76f292d6a72"
 class WeatherViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource {
   @IBOutlet weak var tableView: UITableView!
   
+  var currentDay: CurrentlyWeather!
+  var nextDays = [NextDaysArray]()
   var weatherURL = "https://api.darksky.net/forecast/14b1d29c77ae31f6833d0bda47c7d9f5/"
   var locationManager = CLLocationManager()
-  var weatherCurrentlyDay = WeatherDataModel()
-  var weatherNextFirstDay = WeatherDataModel()
-  var weatherNextSecondDay = WeatherDataModel()
-  var weatherNextThirdDay = WeatherDataModel()
+  var imagesToShare = [AnyObject]()
  
 
     override func viewDidLoad() {
@@ -34,12 +33,24 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UITabl
       locationManager.requestWhenInUseAuthorization()
       locationManager.startUpdatingLocation()
       
-      
-      
     }
   
+  @IBAction func shareAction(_ sender: UIBarButtonItem) {
+    
+    //ScreenShoot
+    UIGraphicsBeginImageContext(view.frame.size)
+    view.layer.render(in: UIGraphicsGetCurrentContext()!)
+    let image = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+    imagesToShare.append(image!)
+    
+    let activityViewController = UIActivityViewController(activityItems: imagesToShare , applicationActivities: nil)
+    activityViewController.popoverPresentationController?.sourceView = self.view
+    present(activityViewController, animated: true, completion: nil)
+  }
+  
   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return 4
+    return nextDays.count
   }
   
   func numberOfSections(in tableView: UITableView) -> Int {
@@ -53,120 +64,79 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UITabl
     
     if indexPath.row == 0 {
       let cell = tableView.dequeueReusableCell(withIdentifier: "currentlyCell") as! CurrentlyTableViewCell
-      print(weatherCurrentlyDay)
-      cell.IconImageView.image = UIImage(named: "\(weatherCurrentlyDay.weatherIconName)")
-      cell.temLabel.text = "\(weatherCurrentlyDay.temperature)˚"
+
+      cell.IconImageView.image = UIImage(named: "\(String(describing: currentDay.currently?.icon))")
+      cell.temLabel.text = "\(currentDay.currently?.temperature!.doubleToStringC ?? "")˚"
+    
       return cell
-    }else if selectRow == 1 {
-      
-      cellNext.iconImageView.image = UIImage(named: "\(weatherNextFirstDay.weatherIconName)")
-      cellNext.nextDaysTemLabel.text = "\(weatherNextFirstDay.temperature)˚"
+    }
+    else if selectRow == 1 {
+
+      cellNext.iconImageView.image = UIImage(named: "\(nextDays[indexPath.row].icon)")
+      cellNext.nextDaysTemLabel.text = "\(nextDays[indexPath.row].temperatureHigh.doubleToStringC)˚"
       cellNext.nextDaysLabel.text = getDayName(dayNumber: selectRow)
-      
+
     }else if selectRow == 2 {
-      cellNext.iconImageView.image = UIImage(named: "\(weatherNextSecondDay.weatherIconName)")
-      cellNext.nextDaysTemLabel.text = "\(weatherNextSecondDay.temperature)˚"
+      cellNext.iconImageView.image = UIImage(named: "\(nextDays[selectRow - 1].icon)")
+      cellNext.nextDaysTemLabel.text = "\(nextDays[indexPath.row].temperatureHigh.doubleToStringC)˚"
       cellNext.nextDaysLabel.text = getDayName(dayNumber: selectRow)
-      
+
     }else if selectRow == 3 {
-      cellNext.iconImageView.image = UIImage(named: "\(weatherNextThirdDay.weatherIconName)")
-      cellNext.nextDaysTemLabel.text = "\(weatherNextThirdDay.temperature)˚"
+      cellNext.iconImageView.image = UIImage(named: "\(nextDays[indexPath.row].icon)")
+      cellNext.nextDaysTemLabel.text = "\(nextDays[indexPath.row].temperatureHigh.doubleToStringC)˚"
       cellNext.nextDaysLabel.text = getDayName(dayNumber: selectRow)
-      
+
     }
     return cellNext
+  
   }
-  
-  
+
+
   func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
     let userLocation: CLLocation = locations[0]
     let latitude = userLocation.coordinate.latitude
     let longitude = userLocation.coordinate.longitude
     
     if latitude != nil && longitude != nil{
-      getTodayResult(url: "\(weatherURL)\(latitude),\(longitude)")
+      connectURL(url: "\(weatherURL)\(latitude),\(longitude)")
+      
     }
     locationManager.stopUpdatingLocation()
     
   }
   
-  
-   //MARK: - Networking
-  
-  func getTodayResult(url: String){
+  // MARK: Networking and JsonDecode
+  func connectURL(url: String){
     print(url)
-
-    if let url = URL(string: url){
-      let request = URLRequest(url: url)
-      
-      let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-        if error == nil {
-          if let incomingData = data {
-            
-            do{
-              let jsonResult = try JSONSerialization.jsonObject(with: incomingData, options: JSONSerialization.ReadingOptions.mutableContainers) as AnyObject
-              //print(jsonResult)
-              self.updateWeatherData(jsonResult: jsonResult)
-              
-            }catch{
-              
-            }
-          }
-        }else{
-          print(error?.localizedDescription)
-        }
+    guard let url = URL(string: url) else {
+      print("url error")
+      return
+    }
+    
+    URLSession.shared.dataTask(with: url) { (data, response, error) in
+      guard let data = data else {
+        return
       }
-      task.resume()
-    }
-    
-    
-  }
-  
-  
-   func updateWeatherData(jsonResult : AnyObject){
-    
-    let weather = jsonResult["currently"] as! [String: AnyObject]
-    let city = jsonResult["timezone"] as! String
-    let daily = jsonResult["daily"] as AnyObject
-    let weatherDaily = daily["data"] as! NSArray
-    let NextFirst = weatherDaily.firstObject as! [String: AnyObject]
-    let NextSecond = weatherDaily[1] as! [String: AnyObject]
-    let NextThird = weatherDaily[2] as! [String: AnyObject]
-    
-    let dene = NextFirst["temperature"] as? Double
-    print("Denee:\(dene)")
-    
-    weatherCurrentlyDay.city = city
-    
-    if let currentlyIcon = weather["icon"] as? String, let currentlyTem = weather["temperature"] as? Double{
-     weatherCurrentlyDay.weatherIconName = currentlyIcon
-      weatherCurrentlyDay.temperature = currentlyTem.doubleToStringC
-    }
-    
-    
-    if let NextFirstIcon = NextFirst["icon"] as? String, let NextFirstTem = NextFirst["temperatureMax"] as? Double {
-      weatherNextFirstDay.weatherIconName = NextFirstIcon
-      weatherNextFirstDay.temperature = NextFirstTem.doubleToStringC
       
-    }
-    
-    if let NextSecondIcon = NextSecond["icon"] as? String, let NextSecondTem = NextSecond["temperatureMax"] as? Double {
-      weatherNextSecondDay.weatherIconName = NextSecondIcon
-      weatherNextSecondDay.temperature = NextSecondTem.doubleToStringC
-    }
-    
-    if let NextThirdIcon = NextThird["icon"] as? String, let NextThirdTem = NextThird["temperatureMax"] as? Double {
-      weatherNextThirdDay.weatherIconName = NextThirdIcon
-      weatherNextThirdDay.temperature = NextThirdTem.doubleToStringC
-      
-    }
-    DispatchQueue.main.async {
-      self.tableView.reloadData()
-    }
-    
+      do{
+        let weather = try JSONDecoder().decode(CurrentlyWeather.self, from: data)
+        let nextWeather = try JSONDecoder().decode(NextDayWeather.self, from: data)
+        self.currentDay = weather
+        self.nextDays = Array(nextWeather.daily.data[0...3])
+        
 
+        DispatchQueue.main.sync {
+          self.tableView.reloadData()
+        }
+      }catch{
+        print(error.localizedDescription)
+        print("errrrrrrrr")
+      }
+      
+      }.resume()
     
   }
+  
   
   // Get day name
   func getDayName(dayNumber: Int) -> String{
@@ -189,11 +159,6 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UITabl
     print(error.localizedDescription)
     
   }
-
-  
-  
-
-
 }
 
 extension Double {

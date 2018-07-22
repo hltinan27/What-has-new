@@ -28,7 +28,8 @@ var cacheImages = NSCache<AnyObject, AnyObject>()
       
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.separatorStyle = .none
+        //tableView.separatorStyle = .none
+        tableView.separatorStyle = .singleLine
         // Row Heightlerin ortalama yükseklik
         tableView.estimatedRowHeight = 185
       
@@ -38,7 +39,6 @@ var cacheImages = NSCache<AnyObject, AnyObject>()
         activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
         view.addSubview(activityIndicator)
      
-      
 
     }
   

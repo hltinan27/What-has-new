@@ -8,14 +8,25 @@
 
 import UIKit
 
-struct WeatherDataModel {
-  
-  //Declare your model variables here
-  var temperature : String = ""
-  var condition : Int = 0
-  var city : String = ""
-  var weatherIconName : String = ""
-  
-  
-
+struct CurrentlyWeather: Codable {
+  let currently: Today?
 }
+
+struct Today: Codable {
+  let icon: String?
+  let temperature: Double?
+}
+
+struct NextDayWeather: Codable {
+  let daily: DayData
+}
+
+struct DayData: Codable {
+  let data: [NextDaysArray]
+}
+
+struct NextDaysArray: Codable {
+  let icon: String
+  let temperatureHigh: Double
+}
+
