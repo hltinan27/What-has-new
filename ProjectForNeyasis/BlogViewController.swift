@@ -21,15 +21,17 @@ var cacheImages = NSCache<AnyObject, AnyObject>()
   var categoryName: String = "" {
     didSet{
         connectURL()
+      self.navigationItem.title = categoryName
     }
   }
     override func viewDidLoad() {
         super.viewDidLoad()
       
+      
         tableView.dataSource = self
         tableView.delegate = self
-        //tableView.separatorStyle = .none
-        tableView.separatorStyle = .singleLine
+        tableView.separatorStyle = .none
+      
         // Row Heightlerin ortalama yükseklik
         tableView.estimatedRowHeight = 185
       
@@ -92,12 +94,11 @@ var cacheImages = NSCache<AnyObject, AnyObject>()
   }
   
 
-  // MARK: Network
+  // MARK: Network and JsonDecode
   
   func connectURL(){
     let convertName = categoryName.replacingOccurrences(of: " ", with: "-")
     let blogURL = "https://newsapi.org/v2/everything?sources=\(convertName)&apiKey=4fca2485d59a4602ab4ac76f292d6a72"
-    print("blog URLLLLLLLL: \(blogURL)")
     guard let url = URL(string: blogURL) else {
       print("url error")
       return
@@ -124,10 +125,10 @@ var cacheImages = NSCache<AnyObject, AnyObject>()
        
         DispatchQueue.main.sync {
           self.tableView.reloadData()
+          self.tableView.separatorStyle = .singleLine
         }
       }catch{
         print(error.localizedDescription)
-        print("errrrrrrrr")
       }
       
     }.resume()
@@ -141,7 +142,7 @@ extension UIImageView {
   func downloadImage(from getUrl: String){
     
     if let cacheImage = cacheImages.object(forKey: getUrl as AnyObject){
-      self.image = cacheImage as! UIImage
+      self.image = (cacheImage as! UIImage)
     }else{
       guard let url = URL(string: getUrl) else {
         print("Image URL error")
@@ -149,7 +150,7 @@ extension UIImageView {
       }
       let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
         guard let data = data else{
-          print("data error")
+          print(error?.localizedDescription as Any)
           return
         }
         if let image = UIImage(data: data){

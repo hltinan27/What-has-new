@@ -12,6 +12,7 @@ import MapKit
 let api: String = "4fca2485d59a4602ab4ac76f292d6a72"
 class WeatherViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource {
   @IBOutlet weak var tableView: UITableView!
+  var activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
   
   var currentDay: CurrentlyWeather!
   var nextDays = [NextDaysArray]()
@@ -26,12 +27,21 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UITabl
       tableView.delegate = self
       tableView.dataSource = self
       
+      tableView.separatorStyle = .none
+      
       // Kullanıcı Location belirleme
       
       locationManager.delegate = self
       locationManager.desiredAccuracy = kCLLocationAccuracyBest
       locationManager.requestWhenInUseAuthorization()
       locationManager.startUpdatingLocation()
+      
+      activityIndicator.center = self.view.center
+      activityIndicator.hidesWhenStopped = true
+      activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
+      view.addSubview(activityIndicator)
+      
+      activityIndicator.startAnimating()
       
     }
   
@@ -64,9 +74,10 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UITabl
     
     if indexPath.row == 0 {
       let cell = tableView.dequeueReusableCell(withIdentifier: "currentlyCell") as! CurrentlyTableViewCell
-
-      cell.IconImageView.image = UIImage(named: "\(String(describing: currentDay.currently?.icon))")
-      cell.temLabel.text = "\(currentDay.currently?.temperature!.doubleToStringC ?? "")˚"
+      if let iconName = currentDay.currently?.icon{
+        cell.IconImageView.image = UIImage(named: iconName)
+      }
+      cell.temLabel.text = "\(currentDay.currently?.temperature.doubleToStringC ?? "")˚"
     
       return cell
     }
@@ -77,7 +88,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UITabl
       cellNext.nextDaysLabel.text = getDayName(dayNumber: selectRow)
 
     }else if selectRow == 2 {
-      cellNext.iconImageView.image = UIImage(named: "\(nextDays[selectRow - 1].icon)")
+      cellNext.iconImageView.image = UIImage(named: "\(nextDays[indexPath.row].icon)")
       cellNext.nextDaysTemLabel.text = "\(nextDays[indexPath.row].temperatureHigh.doubleToStringC)˚"
       cellNext.nextDaysLabel.text = getDayName(dayNumber: selectRow)
 
@@ -89,6 +100,10 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UITabl
     }
     return cellNext
   
+  }
+  
+  func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    activityIndicator.stopAnimating()
   }
 
 
@@ -127,6 +142,7 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UITabl
 
         DispatchQueue.main.sync {
           self.tableView.reloadData()
+          self.tableView.separatorStyle = .singleLine
         }
       }catch{
         print(error.localizedDescription)
@@ -151,8 +167,6 @@ class WeatherViewController: UIViewController, CLLocationManagerDelegate, UITabl
     return utcTimeZoneStr
     
   }
-  
-  
   
   // MARK:didFailWithError method
   func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {

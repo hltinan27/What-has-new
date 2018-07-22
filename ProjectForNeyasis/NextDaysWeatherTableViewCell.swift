@@ -17,7 +17,8 @@ class NextDaysWeatherTableViewCell: UITableViewCell {
         super.awakeFromNib()
     iconImageView.layer.cornerRadius = iconImageView.frame.height / 2.0
     iconImageView.layer.masksToBounds = true
-        // Initialization code
+    
+    
     
     }
 

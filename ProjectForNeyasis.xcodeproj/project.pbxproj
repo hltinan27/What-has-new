@@ -22,6 +22,7 @@
 		2F7BE9FB2102BB1E0032749F /* BlogTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7BE9FA2102BB1E0032749F /* BlogTableViewCell.swift */; };
 		2F7BE9FF21037C020032749F /* CategoryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7BE9FE21037C020032749F /* CategoryTableViewController.swift */; };
 		2F7BEA0121037F4A0032749F /* CategoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7BEA0021037F4A0032749F /* CategoryTableViewCell.swift */; };
+		2F7BEA032104E8E70032749F /* ContactViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F7BEA022104E8E70032749F /* ContactViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 		2F7BE9FA2102BB1E0032749F /* BlogTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlogTableViewCell.swift; sourceTree = "<group>"; };
 		2F7BE9FE21037C020032749F /* CategoryTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTableViewController.swift; sourceTree = "<group>"; };
 		2F7BEA0021037F4A0032749F /* CategoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTableViewCell.swift; sourceTree = "<group>"; };
+		2F7BEA022104E8E70032749F /* ContactViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +116,7 @@
 				2F7BE9FA2102BB1E0032749F /* BlogTableViewCell.swift */,
 				2F7BE9FE21037C020032749F /* CategoryTableViewController.swift */,
 				2F7BEA0021037F4A0032749F /* CategoryTableViewCell.swift */,
+				2F7BEA022104E8E70032749F /* ContactViewController.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -211,6 +214,7 @@
 				2F6CAB2E2102112500348BAD /* MainViewController.swift in Sources */,
 				2F6CAB4D2102569400348BAD /* NextDaysWeatherTableViewCell.swift in Sources */,
 				2F6CAB42210214C600348BAD /* WeatherViewController.swift in Sources */,
+				2F7BEA032104E8E70032749F /* ContactViewController.swift in Sources */,
 				2F6CAB4B210248EF00348BAD /* CurrentlyTableViewCell.swift in Sources */,
 				2F7BEA0121037F4A0032749F /* CategoryTableViewCell.swift in Sources */,
 				2F7BE9F92102A7CF0032749F /* BlogDataModel.swift in Sources */,

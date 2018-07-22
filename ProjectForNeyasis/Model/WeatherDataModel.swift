@@ -13,8 +13,8 @@ struct CurrentlyWeather: Codable {
 }
 
 struct Today: Codable {
-  let icon: String?
-  let temperature: Double?
+  let icon: String
+  let temperature: Double
 }
 
 struct NextDayWeather: Codable {

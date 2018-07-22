@@ -23,8 +23,13 @@ class MainViewController: UIViewController {
   
   @objc func swipe(_ gesture: UISwipeGestureRecognizer){
     
-       let vc = storyboard?.instantiateViewController(withIdentifier: "tabBar")
-    present(vc!, animated: true, completion: nil)
+    UserDefaults.standard.set(true, forKey: "status")
+    UserDefaults.standard.synchronize()
+    let delegate : AppDelegate = UIApplication.shared.delegate as! AppDelegate
+    delegate.introduction()
+    
+    //let vc = storyboard?.instantiateViewController(withIdentifier: "tabBar")
+    //present(vc!, animated: true, completion: nil)
   }
 
   override func didReceiveMemoryWarning() {

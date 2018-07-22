@@ -11,32 +11,41 @@ import UIKit
 class CategoryTableViewController: UITableViewController {
 
   let categoryBlogURL = "https://newsapi.org/v2/sources?apiKey=4fca2485d59a4602ab4ac76f292d6a72"
+  var activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView()
   var categories = [Category]()
   var selectedCategory = ""
     override func viewDidLoad() {
         super.viewDidLoad()
         connectURL()
+      
+      self.navigationItem.title = "News"
+      
+      tableView.separatorStyle = .none
+      
+      activityIndicator.center = self.view.center
+      activityIndicator.hidesWhenStopped = true
+      activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
+      view.addSubview(activityIndicator)
+      
+      activityIndicator.startAnimating()
 
     }
-
+  
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+      
     }
 
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1    }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
         return categories.count
     }
   
 
-  
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCel", for: indexPath) as! CategoryTableViewCell
 
@@ -60,6 +69,9 @@ class CategoryTableViewController: UITableViewController {
       
     }
   }
+  override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    activityIndicator.stopAnimating()
+  }
   
   // MARK: Network
   
@@ -80,10 +92,11 @@ class CategoryTableViewController: UITableViewController {
         
         DispatchQueue.main.sync {
           self.tableView.reloadData()
+          self.tableView.separatorStyle = .singleLine
         }
       }catch{
         print(error.localizedDescription)
-        print("errrrrrrrr")
+        
       }
       
       }.resume()
